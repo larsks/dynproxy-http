@@ -58,7 +58,7 @@ def show_proxy(name):
         'proxy': proxy.as_dict(),
         })
 
-@delete('/proxy/:name')
+@route('/proxy/:name', methods='DELETE')
 def delete_proxy(name):
     proxy = request.db.query(Backend).get(name)
     if proxy is None:
