@@ -4,8 +4,8 @@ import os
 import sys
 import yaml
 
-DEFAULT_CFG_FILE = os.environ.get('CLOUDPROXY_CONFIG',
-        '/etc/cloudproxy.yml')
+DEFAULT_CFG_FILE = os.environ.get('DYNPROXY_CONFIG',
+        '/etc/dynproxy.yml')
 
 config = {}
 
