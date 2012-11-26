@@ -15,10 +15,8 @@ def main():
     while True:
         req = sys.stdin.readline()
         res = s.query(Backend).order_by(func.random()).first()
-        if res is None:
-            print 'NULL'
-        else:
-            print res.ipaddr
+        sys.stdout.write('%s\n' % (res.ipaddr if res else 'NULL'))
+        sys.stdout.flush()
 
 if __name__ == '__main__':
     main()
