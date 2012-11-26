@@ -21,53 +21,62 @@ def finish_request():
     request.db.commit()
     response.content_type='text/plain'
 
-@put('/:name')
-def new_proxy(name):
-    proxy = Backend(
+@put('/backend/:name')
+def new_backend(name):
+    backend = Backend(
             name=name,
             ipaddr=request.remote_addr)
-    request.db.add(proxy)
+    request.db.add(backend)
     return yaml.dump({
         'status': 0,
-        'message': 'created',
-        'proxy': proxy.as_dict(),
+        'action': 'create',
+        'backend': backend.as_dict(),
         })
 
-@post('/:name')
-def update_proxy(name):
-    proxy = request.db.query(Backend).get(name)
-    if proxy is None:
-        return new_proxy(name)
+@post('/backend/:name')
+def update_backend(name):
+    backend = request.db.query(Backend).get(name)
+    if backend is None:
+        return new_backend(name)
 
-    proxy.ipaddr=request.remote_addr
+    backend.ipaddr=request.remote_addr
     return yaml.dump({
         'status': 0,
-        'message': 'updated',
-        'proxy': proxy.as_dict(),
+        'action': 'update',
+        'backend': backend.as_dict(),
         })
 
-@route('/proxy/:name')
-def show_proxy(name):
-    proxy = request.db.query(Backend).get(name)
-    if proxy is None:
-        abort(404, 'No proxy named %s' % name)
+@route('/backend/:name')
+def show_backend(name):
+    backend = request.db.query(Backend).get(name)
+    if backend is None:
+        abort(404, 'No backend named %s' % name)
 
     return yaml.dump({
         'status': 0,
-        'message': 'present',
-        'proxy': proxy.as_dict(),
+        'action': 'show',
+        'backend': backend.as_dict(),
         })
 
-@route('/proxy/:name', methods='DELETE')
-def delete_proxy(name):
-    proxy = request.db.query(Backend).get(name)
-    if proxy is None:
-        abort(404, 'No proxy named %s' % name)
+@delete('/backend/:name')
+def delete_backend(name):
+    backend = request.db.query(Backend).get(name)
+    if res is None:
+        abort(404, 'No backend named %s' % name)
 
-    request.db.delete(proxy)
+    request.db.delete(backend)
     return yaml.dump({
         'status': 0,
-        'message': 'deleted',
+        'action': 'delete',
+        })
+
+@route('/backend')
+def list_backend():
+    backend = request.db.query(Backend)
+    return yaml.dump({
+        'status': 0,
+        'action': 'list',
+        'backends': [x.as_dict() for x in backend],
         })
 
 app = bottle.default_app()
