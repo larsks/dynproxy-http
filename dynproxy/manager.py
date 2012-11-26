@@ -21,7 +21,7 @@ def finish_request():
     request.db.commit()
     response.content_type='text/plain'
 
-@put('/proxy/:name')
+@put('/:name')
 def new_proxy(name):
     proxy = Backend(
             name=name,
@@ -33,11 +33,11 @@ def new_proxy(name):
         'proxy': proxy.as_dict(),
         })
 
-@post('/proxy/:name')
+@post('/:name')
 def update_proxy(name):
     proxy = request.db.query(Backend).get(name)
     if proxy is None:
-        abort(404, 'No proxy named %s' % name)
+        return new_proxy(name)
 
     proxy.ipaddr=request.remote_addr
     return yaml.dump({
