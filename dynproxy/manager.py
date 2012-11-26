@@ -5,12 +5,16 @@ import sys
 
 import yaml
 import bottle
-from bottle import route, post, put, hook, request, response, abort, delete
+from bottle import route, post, put, hook, request, response, abort, delete, error
 
 import config
 from model import *
 
 def asyaml (f):
+    '''A decorator for serializing dictionaries as YAML.  This decorator
+    must be used before (closer to the function) any Bottle routing
+    decorators (which will automatically serialize a dictionary to
+    JSON).'''
     def _ (*args, **kwargs):
         res = f(*args, **kwargs)
         if isinstance(res, dict):
@@ -30,6 +34,15 @@ def setup_request():
 @hook('after_request')
 def finish_request():
     request.db.commit()
+
+@error(404)
+@asyaml
+def error_404(err):
+    return {
+            'status': 404,
+            'url': request.url,
+            'message': err.body,
+            }
 
 @put('/backend/:name')
 @asyaml
@@ -127,5 +140,5 @@ def list_backend():
 app = bottle.default_app()
 
 if __name__ == '__main__':
-    bottle.run(reloader=True)
+    bottle.run(reloader=True, debug=True)
 
