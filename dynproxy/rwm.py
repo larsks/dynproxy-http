@@ -14,7 +14,8 @@ def main():
 
     while True:
         req = sys.stdin.readline()
-        res = s.query(Backend).order_by(func.random()).first()
+        res = s.query(Backend).filter(
+                Backend.enabled == True).order_by(func.random()).first()
         sys.stdout.write('%s\n' % (res.ipaddr if res else 'NULL'))
         sys.stdout.flush()
 

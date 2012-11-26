@@ -25,8 +25,8 @@ class DictSerializable(object):
 class Backend (Base, DictSerializable):
     __tablename__ = 'backends'
     name = Column(String, primary_key=True)
-    ipaddr = Column(String, nullable=True)
-    enabled = Column(Boolean, default=False)
+    ipaddr = Column(String, nullable=False)
+    enabled = Column(Boolean, default=True, nullable=False)
 
 def initmodel(dburi, echo=False):
     engine = create_engine(dburi, echo=echo)

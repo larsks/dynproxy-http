@@ -46,6 +46,34 @@ def update_backend(name):
         'backend': backend.as_dict(),
         })
 
+@route('/backend/:name/enable')
+def enable_backend(name):
+    backend = request.db.query(Backend).get(name)
+    if backend is None:
+        abort(404, 'No backend named %s' % name)
+
+    backend.enabled = True
+
+    return yaml.dump({
+        'status': 0,
+        'action': 'enable',
+        'backend': backend.as_dict(),
+        })
+
+@route('/backend/:name/disable')
+def disable_backend(name):
+    backend = request.db.query(Backend).get(name)
+    if backend is None:
+        abort(404, 'No backend named %s' % name)
+
+    backend.enabled = False
+
+    return yaml.dump({
+        'status': 0,
+        'action': 'disable',
+        'backend': backend.as_dict(),
+        })
+
 @route('/backend/:name')
 def show_backend(name):
     backend = request.db.query(Backend).get(name)
@@ -61,7 +89,7 @@ def show_backend(name):
 @delete('/backend/:name')
 def delete_backend(name):
     backend = request.db.query(Backend).get(name)
-    if res is None:
+    if backend is None:
         abort(404, 'No backend named %s' % name)
 
     request.db.delete(backend)
